@@ -18,39 +18,45 @@
 
         /* Add CSS styles for the "Cryptocurrency Prices" heading */
         #crypto-prices h2 {
-            font-size: 30px;
+            font-size: 50px;
             font-family: 'Bellota Text', cursive;
         }
 
         /* Add CSS styles for cryptocurrency pair names within the cryptoPrices object */
         #crypto-prices p {
-            font-size: 30px;
+            font-size: 40px;
             font-family: 'Bellota Text', cursive;
+            margin-right: 200px;
+            line-height: 0;
         }
 
         h1 {
             font-size: 120px;
             font-family: 'Bellota Text', cursive;
+            opacity: 0.5; /* Set opacity to 50% (0.5) */
         }
 
         #date {
-            font-size: 30px;
+            font-size: 50px;
             font-family: 'Bellota Text', cursive;
+            line-height: 0;
         }
 
+        
     </style>
 </head>
 <body>
-    <h1>🍇🍷🔮</h1>
-
-    <!-- Display the current date -->
-    <p id="date"></p>
-
+    <div class="container">
+        <h1>🍇🍷🔮</h1>
+        <!-- Display the current date -->
+        <p id="date"></p>
+    </div>
+    
     <!-- Display cryptocurrency prices -->
     <div id="crypto-prices">
-        
         <!-- Prices will be displayed here -->
     </div>
+    
 
     <canvas id="crypto-chart"></canvas>
 
