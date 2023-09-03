@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍇🍷🔮</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bellota+Text:wght@300&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* Add CSS styles for the body element to set the background color to grey */
+        body {
+            background-color: #200a31; /* You can adjust the color code as needed */
+            color: rgb(91, 82, 82);
+        }
+
+        /* Add CSS styles for the "Cryptocurrency Prices" heading */
+        #crypto-prices h2 {
+            font-size: 30px;
+            font-family: 'Bellota Text', cursive;
+        }
+
+        /* Add CSS styles for cryptocurrency pair names within the cryptoPrices object */
+        #crypto-prices p {
+            font-size: 30px;
+            font-family: 'Bellota Text', cursive;
+        }
+
+        h1 {
+            font-size: 120px;
+            font-family: 'Bellota Text', cursive;
+        }
+
+        #date {
+            font-size: 30px;
+            font-family: 'Bellota Text', cursive;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>🍇🍷🔮</h1>
+
+    <!-- Display the current date -->
+    <p id="date"></p>
+
+    <!-- Display cryptocurrency prices -->
+    <div id="crypto-prices">
+        <h2>Cryptocurrency Prices</h2>
+        <!-- Prices will be displayed here -->
+    </div>
+
+    <canvas id="crypto-chart"></canvas>
+
+    <script>
+        function updateDate() {
+            const currentDate = new Date();
+            const options = {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+            };
+
+            const formattedDate = currentDate.toLocaleDateString('en-US', options);
+
+            // Split the formatted date by comma and space to insert line breaks
+            const dateParts = formattedDate.split(', ');
+
+            // Extract the time and AM/PM parts
+            const timePart = dateParts[2].slice(0, -3); // Remove " AM" or " PM" from the time
+            const amPmPart = dateParts[2].slice(-3);
+
+            // Set the formatted date with line breaks to the 'date' element
+            document.getElementById('date').innerHTML = `<p>${dateParts[0]}</p><p>${dateParts[1]}</p><p>${timePart}</p><p>${amPmPart}</p>`;
+        }
+
+        // Function to update cryptocurrency prices
+        function updateCryptoPrices() {
+            // Create a WebSocket connection to Coinbase
+            const socket = new WebSocket('wss://ws-feed.pro.coinbase.com');
+
+            // Define an object to store cryptocurrency prices with currency names as keys
+            const cryptoPrices = {
+                'BTC-USD': 0.00,
+                'ETH-USD': 0.00,
+                'LTC-USD': 0.00,
+                'XRP-USD': 0.00,
+                // Add more pairs here if needed
+            };
+
+            // Handle messages received from the WebSocket
+            socket.addEventListener('message', function(event) {
+                const data = JSON.parse(event.data);
+
+                if (data.type === 'ticker' && cryptoPrices.hasOwnProperty(data.product_id)) {
+                    // Extract the cryptocurrency pair and price
+                    const pair = data.product_id;
+                    const price = parseFloat(data.price).toFixed(2);
+
+                    // Update the cryptocurrency price in the object
+                    cryptoPrices[pair] = price;
+
+                    // Display the updated cryptocurrency prices
+                    const cryptoPricesDiv = document.getElementById('crypto-prices');
+                    cryptoPricesDiv.innerHTML = '<h2>Crypto</h2>';
+                    for (const currency in cryptoPrices) {
+                        cryptoPricesDiv.innerHTML += `<p>${currency}: $${cryptoPrices[currency]}</p>`;
+                    }
+                }
+            });
+
+            // Subscribe to cryptocurrency pairs
+            socket.addEventListener('open', function() {
+                socket.send(JSON.stringify({
+                    type: 'subscribe',
+                    product_ids: Object.keys(cryptoPrices),
+                    channels: ['ticker']
+                }));
+            });
+        }
+
+        // Initial page load
+        updateDate();
+        updateCryptoPrices();
+
+        // Update the date and crypto prices every second
+        setInterval(updateDate, 1000);
+        setInterval(updateCryptoPrices, 60000);
+
+        // Add this code to your existing JavaScript
+
+        // Initialize an empty array to store cryptocurrency prices
+        const priceData = [];
+
+        // Create a function to update the chart
+        function updateChart() {
+            const cryptoPricesDiv = document.getElementById('crypto-prices');
+            cryptoPricesDiv.innerHTML = '<h2>Cryptocurrency Prices</h2>';
+            for (const currency in cryptoPrices) {
+                const pair = currency;
+                const price = parseFloat(cryptoPrices[currency]).toFixed(2);
+                priceData.push(price);
+
+                // Update the cryptocurrency price in the object
+                cryptoPrices[pair] = price;
+
+                // Display the updated cryptocurrency prices
+                cryptoPricesDiv.innerHTML += `<p>${pair}: $${cryptoPrices[pair]}</p>`;
+            }
+
+            // Create or update the chart using Chart.js
+            const ctx = document.getElementById('crypto-chart').getContext('2d');
+            const myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({ length: priceData.length }, (_, i) => i + 1),
+                    datasets: [{
+                        label: 'Cryptocurrency Prices',
+                        data: priceData,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                },
+            });
+        }
+
+        // Call the updateChart function to initialize the chart
+        updateChart();
+    </script>
+</body>
+</html>
