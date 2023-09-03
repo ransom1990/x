@@ -48,7 +48,7 @@
 
     <!-- Display cryptocurrency prices -->
     <div id="crypto-prices">
-        <h2>Cryptocurrency Prices</h2>
+        
         <!-- Prices will be displayed here -->
     </div>
 
@@ -108,7 +108,7 @@
 
                     // Display the updated cryptocurrency prices
                     const cryptoPricesDiv = document.getElementById('crypto-prices');
-                    cryptoPricesDiv.innerHTML = '<h2>Crypto</h2>';
+                    cryptoPricesDiv.innerHTML = 'x';
                     for (const currency in cryptoPrices) {
                         cryptoPricesDiv.innerHTML += `<p>${currency}: $${cryptoPrices[currency]}</p>`;
                     }
@@ -141,7 +141,7 @@
         // Create a function to update the chart
         function updateChart() {
             const cryptoPricesDiv = document.getElementById('crypto-prices');
-            cryptoPricesDiv.innerHTML = '<h2>Cryptocurrency Prices</h2>';
+            cryptoPricesDiv.innerHTML = '<h2>Crypto</h2>';
             for (const currency in cryptoPrices) {
                 const pair = currency;
                 const price = parseFloat(cryptoPrices[currency]).toFixed(2);
@@ -161,7 +161,7 @@
                 data: {
                     labels: Array.from({ length: priceData.length }, (_, i) => i + 1),
                     datasets: [{
-                        label: 'Cryptocurrency Prices',
+                        label: 'x',
                         data: priceData,
                         borderColor: 'rgba(75, 192, 192, 1)',
                         backgroundColor: 'rgba(75, 192, 192, 0.2)',
